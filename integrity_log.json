@@ -1,0 +1,51 @@
+{
+  "test_run": "2026-05-29 15:42:48",
+  "original": {
+    "filename": "dokumen_asli.txt",
+    "filepath": "/home/claude/hash_project/dokumen_asli.txt",
+    "size_bytes": 332,
+    "md5": "22680cb86d9a03e34d4084f3c51e73b2",
+    "sha256": "24d3b87def771b2f3961e2b8821d4248730af21e4eeb73cbaed207aa4c77a381",
+    "checked_at": "2026-05-29 15:42:48"
+  },
+  "modified": {
+    "filename": "dokumen_dimodifikasi.txt",
+    "filepath": "/home/claude/hash_project/dokumen_dimodifikasi.txt",
+    "size_bytes": 332,
+    "md5": "b055bd9f8d64da46d3433792062b5e3b",
+    "sha256": "c909b94792662f861b7bb0affe17f24ae8905464d7c541468ee73c0bb0a19e97",
+    "checked_at": "2026-05-29 15:42:48"
+  },
+  "copy_identical": {
+    "filename": "dokumen_salinan.txt",
+    "filepath": "/home/claude/hash_project/dokumen_salinan.txt",
+    "size_bytes": 332,
+    "md5": "22680cb86d9a03e34d4084f3c51e73b2",
+    "sha256": "24d3b87def771b2f3961e2b8821d4248730af21e4eeb73cbaed207aa4c77a381",
+    "checked_at": "2026-05-29 15:42:48"
+  },
+  "result_original_vs_modified": {
+    "file_integrity_compromised": true,
+    "md5_changed": true,
+    "sha256_changed": true,
+    "size_changed": false,
+    "original_md5": "22680cb86d9a03e34d4084f3c51e73b2",
+    "modified_md5": "b055bd9f8d64da46d3433792062b5e3b",
+    "original_sha256": "24d3b87def771b2f3961e2b8821d4248730af21e4eeb73cbaed207aa4c77a381",
+    "modified_sha256": "c909b94792662f861b7bb0affe17f24ae8905464d7c541468ee73c0bb0a19e97",
+    "original_size": 332,
+    "modified_size": 332
+  },
+  "result_original_vs_copy": {
+    "file_integrity_compromised": false,
+    "md5_changed": false,
+    "sha256_changed": false,
+    "size_changed": false,
+    "original_md5": "22680cb86d9a03e34d4084f3c51e73b2",
+    "modified_md5": "22680cb86d9a03e34d4084f3c51e73b2",
+    "original_sha256": "24d3b87def771b2f3961e2b8821d4248730af21e4eeb73cbaed207aa4c77a381",
+    "modified_sha256": "24d3b87def771b2f3961e2b8821d4248730af21e4eeb73cbaed207aa4c77a381",
+    "original_size": 332,
+    "modified_size": 332
+  }
+}
