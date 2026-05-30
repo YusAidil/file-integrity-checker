@@ -2,7 +2,6 @@
 
 Aplikasi pengecekan integritas file menggunakan algoritma hash kriptografi **MD5** dan **SHA-256**.
 
-> Tugas Mata Kuliah: Keamanan Informasi
 
 ---
 
