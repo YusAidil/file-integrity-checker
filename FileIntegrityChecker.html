@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>File Integrity Checker</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:       #0d0f14;
+    --surface:  #151821;
+    --card:     #1c2030;
+    --border:   #2a2f42;
+    --border2:  #363d54;
+    --accent:   #5b8cf7;
+    --accent2:  #7c5bf7;
+    --green:    #2ecc8a;
+    --green-bg: #0d2a1f;
+    --green-bd: #1a4535;
+    --red:      #f75b5b;
+    --red-bg:   #2a0d0d;
+    --red-bd:   #451a1a;
+    --amber:    #f7b55b;
+    --amber-bg: #2a1e0d;
+    --text:     #e8ecf5;
+    --text2:    #8b92a8;
+    --text3:    #4e5570;
+    --purple-glow: rgba(91,140,247,0.15);
+    --ff-head: 'Syne', sans-serif;
+    --ff-body: 'Outfit', sans-serif;
+    --ff-mono: 'DM Mono', monospace;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--ff-body);
+    font-size: 15px;
+    line-height: 1.6;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── background decoration ── */
+  body::before {
+    content: '';
+    position: fixed;
+    top: -200px; left: 50%;
+    transform: translateX(-50%);
+    width: 900px; height: 600px;
+    background: radial-gradient(ellipse at center, rgba(91,140,247,0.09) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .page { position: relative; z-index: 1; max-width: 780px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+
+  /* ── header ── */
+  header { text-align: center; padding: 3rem 0 2.5rem; }
+  .logo-ring {
+    width: 72px; height: 72px; border-radius: 22px;
+    background: linear-gradient(135deg, #1e2a4a, #1a2038);
+    border: 1px solid var(--border2);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1.25rem;
+    box-shadow: 0 0 40px rgba(91,140,247,0.2);
+  }
+  .logo-ring svg { width: 36px; height: 36px; }
+  header h1 {
+    font-family: var(--ff-head);
+    font-size: 2rem; font-weight: 800;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, #e8ecf5 30%, #5b8cf7);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 0.5rem;
+  }
+  header p { color: var(--text2); font-size: 0.9rem; font-weight: 300; }
+  .header-pills { display: flex; justify-content: center; gap: 8px; margin-top: 1rem; flex-wrap: wrap; }
+  .pill {
+    font-size: 11px; font-weight: 500; font-family: var(--ff-mono);
+    padding: 4px 12px; border-radius: 99px;
+    background: rgba(91,140,247,0.1);
+    border: 1px solid rgba(91,140,247,0.25);
+    color: #7aaaf7;
+  }
+
+  /* ── tabs ── */
+  .tabs {
+    display: flex; gap: 4px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 4px;
+    margin-bottom: 1.5rem;
+  }
+  .tab {
+    flex: 1; padding: 10px 0; text-align: center;
+    font-family: var(--ff-head); font-size: 13px; font-weight: 600;
+    color: var(--text3); cursor: pointer; border-radius: 10px;
+    transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 7px;
+  }
+  .tab svg { width: 15px; height: 15px; }
+  .tab:hover { color: var(--text2); background: rgba(255,255,255,0.04); }
+  .tab.on {
+    background: var(--card);
+    color: var(--text);
+    border: 1px solid var(--border2);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+
+  /* ── panels ── */
+  .panel { display: none; }
+  .panel.on { display: block; }
+
+  /* ── drop zone ── */
+  .dz {
+    border: 2px dashed var(--border2);
+    border-radius: 16px;
+    padding: 3rem 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    background: var(--surface);
+    transition: border-color 0.2s, background 0.2s, transform 0.15s;
+    margin-bottom: 1.25rem;
+  }
+  .dz:hover, .dz.drag {
+    border-color: var(--accent);
+    background: rgba(91,140,247,0.06);
+    transform: translateY(-2px);
+  }
+  .dz-icon {
+    width: 56px; height: 56px; border-radius: 16px;
+    background: rgba(91,140,247,0.12);
+    border: 1px solid rgba(91,140,247,0.25);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1rem;
+  }
+  .dz-icon svg { width: 26px; height: 26px; stroke: var(--accent); }
+  .dz-title { font-family: var(--ff-head); font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+  .dz-sub { font-size: 12px; color: var(--text3); }
+  .dz input { display: none; }
+
+  /* ── result card ── */
+  .result-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 14px;
+    animation: slideUp 0.3s ease;
+  }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .rc-head {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 12px;
+  }
+  .rc-file-icon {
+    width: 44px; height: 44px; border-radius: 12px;
+    background: rgba(91,140,247,0.12);
+    border: 1px solid rgba(91,140,247,0.2);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .rc-file-icon svg { width: 22px; height: 22px; stroke: var(--accent); }
+  .rc-fname {
+    font-family: var(--ff-head); font-size: 14px; font-weight: 700;
+    color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 360px;
+  }
+  .rc-fmeta { font-size: 12px; color: var(--text3); margin-top: 2px; font-family: var(--ff-mono); }
+  .copy-all-btn {
+    margin-left: auto; flex-shrink: 0;
+    background: rgba(91,140,247,0.1);
+    border: 1px solid rgba(91,140,247,0.25);
+    color: #7aaaf7; font-size: 12px; font-family: var(--ff-body); font-weight: 500;
+    padding: 6px 14px; border-radius: 8px; cursor: pointer;
+    display: flex; align-items: center; gap: 5px;
+    transition: background 0.15s;
+  }
+  .copy-all-btn:hover { background: rgba(91,140,247,0.2); }
+  .copy-all-btn svg { width: 13px; height: 13px; }
+  .rc-body { padding: 18px 20px; display: flex; flex-direction: column; gap: 14px; }
+
+  /* ── hash block ── */
+  .hash-block {}
+  .hash-top { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
+  .hash-name {
+    font-family: var(--ff-head); font-size: 12px; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase; color: var(--text2);
+  }
+  .hash-badge {
+    font-size: 10px; font-weight: 600; font-family: var(--ff-mono);
+    padding: 2px 8px; border-radius: 99px;
+  }
+  .hb-md5  { background: rgba(124,91,247,0.15); border: 1px solid rgba(124,91,247,0.3); color: #a07cf7; }
+  .hb-sha  { background: rgba(46,204,138,0.12); border: 1px solid rgba(46,204,138,0.25); color: var(--green); }
+  .hash-val {
+    font-family: var(--ff-mono); font-size: 12px; font-weight: 400;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 10px 14px;
+    word-break: break-all; line-height: 1.7;
+    color: var(--text); position: relative;
+    transition: border-color 0.2s;
+    cursor: pointer;
+  }
+  .hash-val:hover { border-color: var(--border2); }
+  .hash-val.changed { color: var(--red); background: var(--red-bg); border-color: var(--red-bd); }
+  .hash-val.same    { color: var(--green); background: var(--green-bg); border-color: var(--green-bd); }
+  .copy-tip { font-size: 10px; color: var(--text3); margin-top: 4px; }
+
+  /* ── compare grid ── */
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+  .mini-slot {}
+  .slot-label {
+    font-family: var(--ff-head); font-size: 10px; font-weight: 700;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--text3); margin-bottom: 8px;
+  }
+  .mini-dz {
+    border: 2px dashed var(--border2); border-radius: 14px;
+    padding: 1.75rem 1rem; text-align: center; cursor: pointer;
+    background: var(--surface); transition: all 0.2s;
+  }
+  .mini-dz:hover, .mini-dz.drag { border-color: var(--accent); background: rgba(91,140,247,0.06); }
+  .mini-dz svg { width: 22px; height: 22px; stroke: var(--text3); display: block; margin: 0 auto 8px; }
+  .mini-dz p { font-size: 12px; color: var(--text3); }
+  .mini-dz input { display: none; }
+  .mini-loaded {
+    background: var(--surface); border: 1px solid var(--border2);
+    border-radius: 12px; padding: 10px 12px; margin-top: 8px;
+  }
+  .mini-loaded-name {
+    font-family: var(--ff-head); font-size: 12px; font-weight: 600;
+    color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .mini-loaded-meta { font-size: 11px; color: var(--text3); font-family: var(--ff-mono); margin-top: 2px; }
+
+  /* ── compare table ── */
+  .cmp-table-wrap { overflow-x: auto; }
+  .cmp-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .cmp-table th {
+    text-align: left; padding: 10px 12px;
+    font-family: var(--ff-head); font-size: 10px; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--text3); border-bottom: 1px solid var(--border);
+  }
+  .cmp-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  .cmp-table tr:last-child td { border-bottom: none; }
+  .cmp-table td:first-child {
+    font-family: var(--ff-head); font-size: 12px; font-weight: 700;
+    color: var(--text2); white-space: nowrap; width: 80px;
+  }
+  .mono { font-family: var(--ff-mono); font-size: 11px; color: var(--text2); word-break: break-all; line-height: 1.5; }
+  .mono.c { color: var(--red); }
+  .mono.g { color: var(--green); }
+  .badge { padding: 3px 10px; border-radius: 99px; font-size: 11px; font-weight: 600; font-family: var(--ff-mono); white-space: nowrap; }
+  .badge.ok { background: var(--green-bg); border: 1px solid var(--green-bd); color: var(--green); }
+  .badge.ng { background: var(--red-bg);   border: 1px solid var(--red-bd);   color: var(--red); }
+
+  /* ── verdict ── */
+  .verdict {
+    border-radius: 14px; padding: 18px 20px;
+    display: flex; align-items: center; gap: 16px;
+    margin-top: 4px; animation: slideUp 0.3s ease;
+  }
+  .verdict.ok   { background: var(--green-bg); border: 1px solid var(--green-bd); }
+  .verdict.fail { background: var(--red-bg);   border: 1px solid var(--red-bd); }
+  .verdict-ring {
+    width: 48px; height: 48px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; font-size: 22px;
+  }
+  .verdict.ok   .verdict-ring { background: rgba(46,204,138,0.15); }
+  .verdict.fail .verdict-ring { background: rgba(247,91,91,0.15); }
+  .verdict-title { font-family: var(--ff-head); font-size: 15px; font-weight: 800; margin-bottom: 3px; }
+  .verdict.ok   .verdict-title { color: var(--green); }
+  .verdict.fail .verdict-title { color: var(--red); }
+  .verdict-desc { font-size: 13px; }
+  .verdict.ok   .verdict-desc { color: rgba(46,204,138,0.75); }
+  .verdict.fail .verdict-desc { color: rgba(247,91,91,0.75); }
+
+  /* ── loading state ── */
+  .loading { text-align: center; padding: 2rem; color: var(--text3); font-size: 13px; }
+  .spinner {
+    width: 28px; height: 28px; border: 2px solid var(--border2);
+    border-top-color: var(--accent); border-radius: 50%;
+    animation: spin 0.7s linear infinite; margin: 0 auto 12px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── footer ── */
+  footer { text-align: center; margin-top: 3rem; color: var(--text3); font-size: 12px; }
+  footer span { color: var(--accent); font-family: var(--ff-mono); }
+
+  /* ── toast ── */
+  .toast {
+    position: fixed; bottom: 24px; right: 24px;
+    background: var(--card); border: 1px solid var(--green-bd);
+    color: var(--green); font-size: 13px; font-family: var(--ff-body);
+    padding: 10px 18px; border-radius: 10px;
+    opacity: 0; transform: translateY(8px);
+    transition: all 0.25s; pointer-events: none; z-index: 999;
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 520px) {
+    .grid2 { grid-template-columns: 1fr; }
+    header h1 { font-size: 1.5rem; }
+    .rc-fname { max-width: 180px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <header>
+    <div class="logo-ring">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#5b8cf7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        <polyline points="9 12 11 14 15 10"/>
+      </svg>
+    </div>
+    <h1>File Integrity Checker</h1>
+    <p>Verifikasi keaslian file menggunakan hash kriptografi MD5 &amp; SHA-256</p>
+    <div class="header-pills">
+      <span class="pill">🔒 Diproses lokal</span>
+      <span class="pill">MD5 · 128-bit</span>
+      <span class="pill">SHA-256 · 256-bit</span>
+      <span class="pill">No internet needed</span>
+    </div>
+  </header>
+
+  <div class="tabs">
+    <div class="tab on" onclick="switchTab('single')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      Satu File
+    </div>
+    <div class="tab" onclick="switchTab('compare')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="7" y1="18" x2="17" y2="18"/><line x1="7" y1="14" x2="11" y2="14"/></svg>
+      Bandingkan 2 File
+    </div>
+  </div>
+
+  <!-- PANEL SINGLE -->
+  <div class="panel on" id="panel-single">
+    <div class="dz" id="dz1"
+      onclick="document.getElementById('f1').click()"
+      ondragover="onDragOver(event,'dz1')" ondragleave="onDragLeave('dz1')"
+      ondrop="onDropSingle(event)">
+      <div class="dz-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/>
+          <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/>
+        </svg>
+      </div>
+      <div class="dz-title">Drag &amp; drop file di sini</div>
+      <div class="dz-sub">atau klik untuk memilih file &nbsp;·&nbsp; semua format didukung</div>
+      <input type="file" id="f1" onchange="readSingle(this)">
+    </div>
+    <div id="result-single"></div>
+  </div>
+
+  <!-- PANEL COMPARE -->
+  <div class="panel" id="panel-compare">
+    <div class="grid2">
+      <div class="mini-slot">
+        <div class="slot-label">📄 File Asli</div>
+        <div class="mini-dz" id="dz2"
+          onclick="document.getElementById('f2').click()"
+          ondragover="onDragOver(event,'dz2')" ondragleave="onDragLeave('dz2')"
+          ondrop="onDropCmp(event,0)">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          <p>Upload file asli</p>
+          <input type="file" id="f2" onchange="readCmp(this,0)">
+        </div>
+        <div id="info2"></div>
+      </div>
+      <div class="mini-slot">
+        <div class="slot-label">🔍 File Pembanding</div>
+        <div class="mini-dz" id="dz3"
+          onclick="document.getElementById('f3').click()"
+          ondragover="onDragOver(event,'dz3')" ondragleave="onDragLeave('dz3')"
+          ondrop="onDropCmp(event,1)">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          <p>Upload file pembanding</p>
+          <input type="file" id="f3" onchange="readCmp(this,1)">
+        </div>
+        <div id="info3"></div>
+      </div>
+    </div>
+    <div id="result-compare"></div>
+  </div>
+
+</div><!-- /page -->
+
+<footer>
+  <p>Semua proses terjadi di browser &mdash; file <span>tidak dikirim</span> ke server manapun</p>
+  <p style="margin-top:4px">Tugas Keamanan Informasi &middot; MD5 &amp; SHA-256</p>
+</footer>
+
+<div class="toast" id="toast">✓ Hash disalin!</div>
+
+<script>
+// ─── state ───────────────────────────────
+const cmpData = [null, null];
+
+// ─── tab ─────────────────────────────────
+function switchTab(t) {
+  document.querySelectorAll('.tab').forEach((el,i)=>el.classList.toggle('on',(i===0&&t==='single')||(i===1&&t==='compare')));
+  document.getElementById('panel-single').classList.toggle('on', t==='single');
+  document.getElementById('panel-compare').classList.toggle('on', t==='compare');
+}
+
+// ─── drag ─────────────────────────────────
+function onDragOver(e, id) { e.preventDefault(); document.getElementById(id).classList.add('drag'); }
+function onDragLeave(id)   { document.getElementById(id).classList.remove('drag'); }
+function onDropSingle(e)   { e.preventDefault(); onDragLeave('dz1'); const f=e.dataTransfer.files[0]; if(f) processSingle(f); }
+function onDropCmp(e,idx)  { e.preventDefault(); onDragLeave(idx===0?'dz2':'dz3'); const f=e.dataTransfer.files[0]; if(f) processCmp(f,idx); }
+
+// ─── file input ───────────────────────────
+function readSingle(inp) { if(inp.files[0]) processSingle(inp.files[0]); }
+function readCmp(inp,idx){ if(inp.files[0]) processCmp(inp.files[0],idx); }
+
+// ─── process single ───────────────────────
+function processSingle(file) {
+  document.getElementById('result-single').innerHTML = `<div class="loading"><div class="spinner"></div>Menghitung hash…</div>`;
+  const r = new FileReader();
+  r.onload = async e => {
+    const data = new Uint8Array(e.target.result);
+    const [m, s] = await Promise.all([md5(data), sha256(data)]);
+    const ts = new Date().toLocaleString('id-ID',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+    document.getElementById('result-single').innerHTML = `
+    <div class="result-card">
+      <div class="rc-head">
+        <div class="rc-file-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
+            <polyline points="9 15 11 17 15 13"/>
+          </svg>
+        </div>
+        <div style="flex:1;min-width:0">
+          <div class="rc-fname">${esc(file.name)}</div>
+          <div class="rc-fmeta">${fmtSize(file.size)} &nbsp;·&nbsp; ${ts}</div>
+        </div>
+        <button class="copy-all-btn" onclick="copyText('MD5:    ${m}\\nSHA-256: ${s}', this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          Salin Semua
+        </button>
+      </div>
+      <div class="rc-body">
+        <div class="hash-block">
+          <div class="hash-top">
+            <span class="hash-name">MD5</span>
+            <span class="hash-badge hb-md5">128-bit</span>
+          </div>
+          <div class="hash-val" onclick="copyText('${m}')" title="Klik untuk salin">${m}</div>
+          <div class="copy-tip">↑ klik untuk salin</div>
+        </div>
+        <div class="hash-block">
+          <div class="hash-top">
+            <span class="hash-name">SHA-256</span>
+            <span class="hash-badge hb-sha">256-bit</span>
+          </div>
+          <div class="hash-val" onclick="copyText('${s}')" title="Klik untuk salin">${s}</div>
+          <div class="copy-tip">↑ klik untuk salin</div>
+        </div>
+      </div>
+    </div>`;
+  };
+  r.readAsArrayBuffer(file);
+}
+
+// ─── process compare ──────────────────────
+function processCmp(file, idx) {
+  const infoId = idx===0 ? 'info2' : 'info3';
+  document.getElementById(infoId).innerHTML = `<div class="loading" style="padding:1rem"><div class="spinner"></div></div>`;
+  const r = new FileReader();
+  r.onload = async e => {
+    const data = new Uint8Array(e.target.result);
+    const [m, s] = await Promise.all([md5(data), sha256(data)]);
+    cmpData[idx] = { name: file.name, size: file.size, md5: m, sha256: s };
+    document.getElementById(infoId).innerHTML = `
+      <div class="mini-loaded">
+        <div class="mini-loaded-name">✓ ${esc(file.name)}</div>
+        <div class="mini-loaded-meta">${fmtSize(file.size)} · hash siap</div>
+      </div>`;
+    if (cmpData[0] && cmpData[1]) renderCompare();
+  };
+  r.readAsArrayBuffer(file);
+}
+
+function renderCompare() {
+  const a = cmpData[0], b = cmpData[1];
+  const ms = a.md5===b.md5, ss = a.sha256===b.sha256, sz = a.size===b.size;
+  const ok = ms && ss;
+
+  document.getElementById('result-compare').innerHTML = `
+  <div class="result-card">
+    <div class="rc-head">
+      <div class="rc-file-icon" style="background:${ok?'rgba(46,204,138,0.12)':'rgba(247,91,91,0.12)'};border-color:${ok?'rgba(46,204,138,0.25)':'rgba(247,91,91,0.25)'}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="${ok?'#2ecc8a':'#f75b5b'}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          ${ok?'<polyline points="20 6 9 17 4 12"/>':'<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>'}
+        </svg>
+      </div>
+      <div>
+        <div class="rc-fname">Hasil perbandingan</div>
+        <div class="rc-fmeta">${esc(a.name)} vs ${esc(b.name)}</div>
+      </div>
+    </div>
+    <div class="rc-body">
+      <div class="cmp-table-wrap">
+        <table class="cmp-table">
+          <thead><tr><th>Aspek</th><th>File Asli</th><th>File Pembanding</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>Ukuran</td>
+              <td class="mono">${fmtSize(a.size)}</td>
+              <td class="mono">${fmtSize(b.size)}</td>
+              <td><span class="badge ${sz?'ok':'ng'}">${sz?'✓ Sama':'✗ Beda'}</span></td>
+            </tr>
+            <tr>
+              <td>MD5</td>
+              <td class="mono ${ms?'g':'c'}">${a.md5}</td>
+              <td class="mono ${ms?'g':'c'}">${b.md5}</td>
+              <td><span class="badge ${ms?'ok':'ng'}">${ms?'✓ Sama':'✗ Berubah'}</span></td>
+            </tr>
+            <tr>
+              <td>SHA-256</td>
+              <td class="mono ${ss?'g':'c'}">${a.sha256.slice(0,30)}…</td>
+              <td class="mono ${ss?'g':'c'}">${b.sha256.slice(0,30)}…</td>
+              <td><span class="badge ${ss?'ok':'ng'}">${ss?'✓ Sama':'✗ Berubah'}</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="verdict ${ok?'ok':'fail'}">
+    <div class="verdict-ring">${ok?'✅':'🚨'}</div>
+    <div>
+      <div class="verdict-title">${ok?'Integritas Terjaga — File Identik!':'Integritas GAGAL — File Telah Dimodifikasi!'}</div>
+      <div class="verdict-desc">${ok?'Semua nilai hash MD5 dan SHA-256 cocok sempurna. File aman.':(!sz?'Ukuran dan hash berbeda — file jelas dimodifikasi.':'Ukuran sama, tetapi hash berubah total. Bahkan 1 karakter yang diubah langsung terdeteksi.')}</div>
+    </div>
+  </div>`;
+}
+
+// ─── utils ────────────────────────────────
+function fmtSize(b) {
+  if (b < 1024) return b + ' B';
+  if (b < 1048576) return (b/1024).toFixed(1) + ' KB';
+  return (b/1048576).toFixed(2) + ' MB';
+}
+function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function copyText(text, btn) {
+  navigator.clipboard.writeText(text).then(() => {
+    showToast();
+    if (btn) { const o=btn.textContent; btn.textContent='✓ Disalin!'; setTimeout(()=>btn.textContent=o,1500); }
+  }).catch(()=>{});
+}
+function showToast() {
+  const t = document.getElementById('toast');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+// ─── SHA-256 via WebCrypto ────────────────
+async function sha256(data) {
+  const buf = await crypto.subtle.digest('SHA-256', data.buffer);
+  return Array.from(new Uint8Array(buf)).map(x=>x.toString(16).padStart(2,'0')).join('');
+}
+
+// ─── MD5 (pure JS) ───────────────────────
+async function md5(data) {
+  const s=[7,12,17,22,7,12,17,22,7,12,17,22,7,12,17,22,
+           5,9,14,20,5,9,14,20,5,9,14,20,5,9,14,20,
+           4,11,16,23,4,11,16,23,4,11,16,23,4,11,16,23,
+           6,10,15,21,6,10,15,21,6,10,15,21,6,10,15,21];
+  const K=new Int32Array(64);
+  for(let i=0;i<64;i++) K[i]=Math.floor(Math.abs(Math.sin(i+1))*0x100000000)|0;
+  let a0=0x67452301,b0=0xefcdab89,c0=0x98badcfe,d0=0x10325476;
+  const ml=data.length, bl=ml*8;
+  const p=new Uint8Array(Math.ceil((ml+9)/64)*64);
+  p.set(data); p[ml]=0x80;
+  const dv=new DataView(p.buffer);
+  dv.setUint32(p.length-8, bl&0xffffffff, true);
+  dv.setUint32(p.length-4, Math.floor(bl/0x100000000), true);
+  for(let i=0;i<p.length;i+=64){
+    const M=new Int32Array(16);
+    for(let j=0;j<16;j++) M[j]=dv.getInt32(i+j*4,true);
+    let A=a0,B=b0,C=c0,D=d0;
+    for(let j=0;j<64;j++){
+      let F,g;
+      if(j<16){F=(B&C)|(~B&D);g=j;}
+      else if(j<32){F=(D&B)|(~D&C);g=(5*j+1)%16;}
+      else if(j<48){F=B^C^D;g=(3*j+5)%16;}
+      else{F=C^(B|(~D));g=(7*j)%16;}
+      F=(F+A+K[j]+M[g])|0; A=D; D=C; C=B;
+      B=(B+(F<<s[j]|F>>>(32-s[j])))|0;
+    }
+    a0=(a0+A)|0; b0=(b0+B)|0; c0=(c0+C)|0; d0=(d0+D)|0;
+  }
+  const res=new Uint8Array(16);
+  const rv=new DataView(res.buffer);
+  rv.setUint32(0,a0,true); rv.setUint32(4,b0,true);
+  rv.setUint32(8,c0,true); rv.setUint32(12,d0,true);
+  return Array.from(res).map(x=>x.toString(16).padStart(2,'0')).join('');
+}
+</script>
+</body>
+</html>
