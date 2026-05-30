@@ -1,51 +1,63 @@
 {
-  "test_run": "2026-05-29 15:42:48",
-  "original": {
-    "filename": "dokumen_asli.txt",
-    "filepath": "/home/claude/hash_project/dokumen_asli.txt",
-    "size_bytes": 332,
-    "md5": "22680cb86d9a03e34d4084f3c51e73b2",
-    "sha256": "24d3b87def771b2f3961e2b8821d4248730af21e4eeb73cbaed207aa4c77a381",
-    "checked_at": "2026-05-29 15:42:48"
+  "test_run": "2026-05-31 05:53:15",
+  "skenario_A": {
+    "original": {
+      "filename": "kontrak_asli.txt",
+      "filepath": "C:\\Users\\ADVAN\\Desktop\\SMESTER 4\\kirpto 02\\kontrak_asli.txt",
+      "size_bytes": 1098,
+      "md5": "c1bfb365b0e286976defa3b32f24a001",
+      "sha256": "caec99deee13c9eadfa8a1e27be6bada689bff75bb44bd6644617a8777aabbc0",
+      "checked_at": "2026-05-31 05:53:15"
+    },
+    "modified": {
+      "filename": "kontrak_dimodifikasi.txt",
+      "filepath": "C:\\Users\\ADVAN\\Desktop\\SMESTER 4\\kirpto 02\\kontrak_dimodifikasi.txt",
+      "size_bytes": 1103,
+      "md5": "13b259367a60e6b9ed4511bdf17517a5",
+      "sha256": "e372d3e212e6f73257b324082cbc2942c74c49cb55b45a387367c587da8bd700",
+      "checked_at": "2026-05-31 05:53:15"
+    },
+    "result": {
+      "file_integrity_compromised": true,
+      "md5_changed": true,
+      "sha256_changed": true,
+      "size_changed": true,
+      "original_md5": "c1bfb365b0e286976defa3b32f24a001",
+      "modified_md5": "13b259367a60e6b9ed4511bdf17517a5",
+      "original_sha256": "caec99deee13c9eadfa8a1e27be6bada689bff75bb44bd6644617a8777aabbc0",
+      "modified_sha256": "e372d3e212e6f73257b324082cbc2942c74c49cb55b45a387367c587da8bd700",
+      "original_size": 1098,
+      "modified_size": 1103
+    }
   },
-  "modified": {
-    "filename": "dokumen_dimodifikasi.txt",
-    "filepath": "/home/claude/hash_project/dokumen_dimodifikasi.txt",
-    "size_bytes": 332,
-    "md5": "b055bd9f8d64da46d3433792062b5e3b",
-    "sha256": "c909b94792662f861b7bb0affe17f24ae8905464d7c541468ee73c0bb0a19e97",
-    "checked_at": "2026-05-29 15:42:48"
-  },
-  "copy_identical": {
-    "filename": "dokumen_salinan.txt",
-    "filepath": "/home/claude/hash_project/dokumen_salinan.txt",
-    "size_bytes": 332,
-    "md5": "22680cb86d9a03e34d4084f3c51e73b2",
-    "sha256": "24d3b87def771b2f3961e2b8821d4248730af21e4eeb73cbaed207aa4c77a381",
-    "checked_at": "2026-05-29 15:42:48"
-  },
-  "result_original_vs_modified": {
-    "file_integrity_compromised": true,
-    "md5_changed": true,
-    "sha256_changed": true,
-    "size_changed": false,
-    "original_md5": "22680cb86d9a03e34d4084f3c51e73b2",
-    "modified_md5": "b055bd9f8d64da46d3433792062b5e3b",
-    "original_sha256": "24d3b87def771b2f3961e2b8821d4248730af21e4eeb73cbaed207aa4c77a381",
-    "modified_sha256": "c909b94792662f861b7bb0affe17f24ae8905464d7c541468ee73c0bb0a19e97",
-    "original_size": 332,
-    "modified_size": 332
-  },
-  "result_original_vs_copy": {
-    "file_integrity_compromised": false,
-    "md5_changed": false,
-    "sha256_changed": false,
-    "size_changed": false,
-    "original_md5": "22680cb86d9a03e34d4084f3c51e73b2",
-    "modified_md5": "22680cb86d9a03e34d4084f3c51e73b2",
-    "original_sha256": "24d3b87def771b2f3961e2b8821d4248730af21e4eeb73cbaed207aa4c77a381",
-    "modified_sha256": "24d3b87def771b2f3961e2b8821d4248730af21e4eeb73cbaed207aa4c77a381",
-    "original_size": 332,
-    "modified_size": 332
+  "skenario_B": {
+    "original": {
+      "filename": "kontrak_asli.txt",
+      "filepath": "C:\\Users\\ADVAN\\Desktop\\SMESTER 4\\kirpto 02\\kontrak_asli.txt",
+      "size_bytes": 1098,
+      "md5": "c1bfb365b0e286976defa3b32f24a001",
+      "sha256": "caec99deee13c9eadfa8a1e27be6bada689bff75bb44bd6644617a8777aabbc0",
+      "checked_at": "2026-05-31 05:53:15"
+    },
+    "copy": {
+      "filename": "kontrak_salinan.txt",
+      "filepath": "C:\\Users\\ADVAN\\Desktop\\SMESTER 4\\kirpto 02\\kontrak_salinan.txt",
+      "size_bytes": 1098,
+      "md5": "c1bfb365b0e286976defa3b32f24a001",
+      "sha256": "caec99deee13c9eadfa8a1e27be6bada689bff75bb44bd6644617a8777aabbc0",
+      "checked_at": "2026-05-31 05:53:15"
+    },
+    "result": {
+      "file_integrity_compromised": false,
+      "md5_changed": false,
+      "sha256_changed": false,
+      "size_changed": false,
+      "original_md5": "c1bfb365b0e286976defa3b32f24a001",
+      "modified_md5": "c1bfb365b0e286976defa3b32f24a001",
+      "original_sha256": "caec99deee13c9eadfa8a1e27be6bada689bff75bb44bd6644617a8777aabbc0",
+      "modified_sha256": "caec99deee13c9eadfa8a1e27be6bada689bff75bb44bd6644617a8777aabbc0",
+      "original_size": 1098,
+      "modified_size": 1098
+    }
   }
 }

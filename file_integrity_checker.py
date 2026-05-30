@@ -7,6 +7,7 @@
 import hashlib
 import os
 import json
+import shutil
 from datetime import datetime
 
 # ─────────────────────────────────────────────
@@ -107,7 +108,6 @@ def print_comparison(result):
 # ─────────────────────────────────────────────
 
 def run_simulation():
-    # Folder yang sama dengan lokasi file Python ini
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
     original_path = os.path.join(BASE_DIR, "kontrak_asli.txt")
@@ -118,7 +118,6 @@ def run_simulation():
     print("  FILE INTEGRITY CHECKER — MD5 & SHA-256")
     print(SEP)
 
-    # Cek apakah file uji tersedia
     if not os.path.exists(original_path):
         print(f"\n  ERROR: File '{original_path}' tidak ditemukan!")
         print("  Pastikan file kontrak_asli.txt ada di folder yang sama.")
@@ -128,11 +127,8 @@ def run_simulation():
         print("  Pastikan file kontrak_dimodifikasi.txt ada di folder yang sama.")
         return
 
-    # Buat salinan identik otomatis
-    with open(original_path, "r", encoding="utf-8") as f:
-        isi_asli = f.read()
-    with open(copy_path, "w", encoding="utf-8") as f:
-        f.write(isi_asli)
+    # ── FIX: Gunakan shutil.copy2 agar salinan byte-perfect ──
+    shutil.copy2(original_path, copy_path)
 
     # ── Skenario A: Asli vs Dimodifikasi ──
     print("\n[SKENARIO A] File Asli vs File Dimodifikasi")
